@@ -4,18 +4,22 @@ function parsePath(path) {
   }
 }
 
-function Watcher(target, key, cb, value) {
+function Watcher(target, key, cb) {
   this.target = target;
   this.key = key;
   this.cb = cb;
-  this.value = value;
+  this.value = this.get();
+
   return this;
 }
 
 Watcher.prototype.get = function() {
+  console.log('watcher get');
   let value;
 
+  pushTarget(this);
   value = this.target[this.key];
+  popTarget();
 
   return value;
 }
@@ -29,19 +33,40 @@ Watcher.prototype.update = function() {
 }
 
 
-function Dep(watcher) {
-  this.watcher = watcher;
+function Dep() {
+  this.subs = [];
   return this;
 }
 
 Dep.prototype.depend = function() {
   console.log('depend');
+  if(this.subs.indexOf(Dep.target) > -1) return;
+
+  this.subs.push(Dep.target);
 }
 
 Dep.prototype.notify = function() {
   console.log('notify');
 
-  this.watcher.update();
+  var i;
+  for(i = 0; i < this.subs.length; i++) {
+    this.subs[i].update();
+  }
+}
+
+Dep.target = null;
+var targetStack = [];
+
+function pushTarget(target) {
+  console.log('pushTarget');
+  if(Dep.target) targetStack.push(Dep.target);
+
+  Dep.target = target;
+}
+
+function popTarget() {
+  console.log('popTarget');
+  Dep.target = targetStack.pop();
 }
 
 
@@ -52,8 +77,6 @@ function defineReactive(obj, key, val) {
 
   if(property && property.configurable === false) return;
 
-  console.dir(property);
-
   var getter = property.get;
   var setter = property.set;
 
@@ -61,12 +84,17 @@ function defineReactive(obj, key, val) {
     enumerable: true,
     configurable: true,
     get: function() {
+      console.log('property get');
       var value = getter ? getter.call(obj) : val;
 
-      dep.depend();
+      if(Dep.target) {
+        dep.depend();
+      }
+
       return value;
     },
     set: function(v) {
+      console.log('property set');
       var value = getter ? getter.call(obj) : val;
 
       if(value === v || (v !== v && value !== value)) {
