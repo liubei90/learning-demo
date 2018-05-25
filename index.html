@@ -12,8 +12,56 @@
     // TogetherJSConfig_hubBase = 'https://iss.bell.ai/hub';
   </script>
   <!-- <script src="./libs/togetherjs-min.js"></script> -->
+
+  <style>
+    .parent {
+      display: flex;
+      justify-content: flex-start;
+    }
+    .child {
+      flex-shrink: 1;
+      flex-grow: 1;
+      flex-basis: 100%;
+    }
+    .item1 {
+      
+    }
+    .item2 {
+      
+    }
+
+    .sub_parent {
+      display: flex;
+    }
+    .sub_child {
+      flex-shrink: 0;
+      flex-grow: 1;
+    }
+  </style>
 </head>
 <body>
+
+  <div class="parent">
+    <div class="child item1">
+        <div class="sub_parent" style="height: 300px;">
+          <div class="sub_child" style="flex-basis: 300px;"></div>
+        </div>
+    </div>
+    <div class="child item2">
+      <div class="sub_parent" style="height: 300px;">
+        <div class="sub_child" style="flex-basis: 300px;"></div>
+        <div class="sub_child" style="flex-basis: 400px;"></div>
+        <div class="sub_child" style="flex-basis: 500px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub_parent" style="height: 300px;">
+    <div class="sub_child" style="flex-basis: 300px;"></div>
+    <div class="sub_child" style="flex-basis: 400px;"></div>
+    <div class="sub_child" style="flex-basis: 500px;"></div>
+  </div>
+
   <!-- <button onclick="TogetherJS(this); return false;">TogetherJS</button> -->
 
   <button id="clickBtn">click me</button>
