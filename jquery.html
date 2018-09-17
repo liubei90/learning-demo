@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./libs/jquery.js"></script>
+</head>
+<body>
+  <form id="dForm" action="">
+    <input type="text" name="name" value="liu">
+    <input type="text" name="gender" value="1">
+    <input type="text" name="ids" value="12">
+    <input type="text" name="ids" value="22">
+    <input type="text" name="ids" value="14">
+  </form>
+
+
+  <script>
+    var obj = {
+      name: 'liu',
+      gender: 1,
+      ids: [12, 22, 14]
+    };
+    
+    console.log($.param(obj));
+
+    // name=liu&gender=1&ids%5B%5D=12&ids%5B%5D=22&ids%5B%5D=14
+    $.ajax({
+      url: './',
+      method: 'put',
+      data: obj,
+    });
+
+    var dForm = $('#dForm');
+
+    // name=liu&gender=1&ids=12&ids=22&ids=14
+    $.ajax({
+      url: './',
+      method: 'put',
+      data: dForm.serialize(),
+    });
+  </script>
+</body>
+</html>

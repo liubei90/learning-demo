@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./libs/ajv.bundle.js"></script>
+  <!-- <script src="./libs/ajv.min.js"></script> -->
+</head>
+<body>
+
+  <script>
+
+    var customerSchema = {
+      properties: {
+        type: {
+          type: 'string',
+          enum: [ 'bkk' ]
+        }
+      },
+      required: ['type']
+    }
+
+    var schemaData = {
+      type: 'bkk2'
+    }
+  </script>
+  
+  <script>
+    console.log(Ajv);
+
+    var ajv = new Ajv();
+    getData('./libs/json-schema-draft-06.json', function(data) {
+      var draft06 = JSON.parse(data);
+      var validate = ajv.addMetaSchema(draft06).compile(customerSchema);
+
+      console.log(draft06);
+      console.log(validate);
+
+      var valid = validate(schemaData);
+      console.log(valid);
+      console.log(validate.errors);
+    });
+
+    function getData(url, cb) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            if (typeof cb === 'function') {
+              cb.call(null, xhr.responseText);
+            }
+          }
+        }
+      }
+      xhr.send();
+    }
+  </script>
+
+</body>
+</html>

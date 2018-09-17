@@ -41,6 +41,7 @@
 </head>
 <body>
 
+  <!-- 
   <div class="parent">
     <div class="child item1">
         <div class="sub_parent" style="height: 300px;">
@@ -60,13 +61,64 @@
     <div class="sub_child" style="flex-basis: 300px;"></div>
     <div class="sub_child" style="flex-basis: 400px;"></div>
     <div class="sub_child" style="flex-basis: 500px;"></div>
-  </div>
+  </div> 
+  -->
 
   <!-- <button onclick="TogetherJS(this); return false;">TogetherJS</button> -->
 
+  <!--
   <button id="clickBtn">click me</button>
 
   <div id="inner"></div>
+  -->
+
+  <p>What fruits do you like?</p>
+  <ol ondragstart="dragStartHandler(event)">
+    <li draggable="true" data-value="1">Apples</li>
+    <li draggable="true" data-value="2">Oranges</li>
+    <li draggable="true" data-value="3">Pears</li>
+  </ol>
+
+  <div>
+    <input ondrop="dropHandler(event)" ondragover="dragOverHandler(event)"></input>
+  </div>
+
+  <div style="width: 300px; height: 100px; border: 1px solid #f0f0f0;" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)"></div>
+  <script>
+    // set this to something specific to your site
+    var internalDNDType = 'text/x-example';
+
+    function dragStartHandler(event) {
+      console.log(event);
+      if (event.target instanceof HTMLLIElement) {
+        // use the element’s data-value="" attribute as the value to be moving:
+        event.dataTransfer.setData(internalDNDType, event.target.dataset.value);
+        // only allow moves
+        event.dataTransfer.dropEffect = 'move';
+        event.dataTransfer.effectAllowed = 'move';
+
+        console.log(event.dataTransfer.items.length, JSON.stringify(event.dataTransfer.items));
+      } else {
+        // don’t allow selection to be dragged
+        event.preventDefault();
+      }
+    }
+
+    function dropHandler(event) {
+      console.log(event);
+      console.log(event.dataTransfer.items.length, event.dataTransfer.getData(internalDNDType));
+      // event.preventDefault();
+    }
+
+    function dragEndHandler(event) {
+      console.log(event);
+      event.preventDefault();
+    }
+
+    function dragOverHandler(event) {
+      event.preventDefault();
+    }
+  </script>
 
   <script src="./reactive.js"></script>
   <script src="./index.js"></script>
