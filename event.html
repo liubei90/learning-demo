@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .example-mouse1 {
+      height: 150px;
+    }
+    .example-mouse1-first,
+    .example-mouse1-second {
+      width: 100px;
+      height: 100px;
+      margin: 25px;
+      background-color: #f0f0f0;
+      display: inline-block;
+    }
+    .example-mouse1-first {
+
+    }
+    .example-mouse1-second {
+
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <a href="http://www.163.com">163</a>
+    <a href="http://www.163.com" id="preventlink">被阻止的链接</a>
+    <div id="tips1"></div>
+    <script>
+      var tips1 = document.querySelector('#tips1');
+      var preventlink = document.querySelector('#preventlink');
+      preventlink.addEventListener('click', function(event) {
+        event.preventDefault();
+        tips1.innerHTML = '链接跳转被阻止';
+      }, false);
+    </script>
+  </div>
+
+  <div>
+    <label>
+      <input type="checkbox" value="恶魔猎手">恶魔猎手
+    </label>
+    <label>
+      <input type="checkbox" value="幻影刺客" id="preventcheckbox">幻影刺客
+    </label>
+    <script>
+      var preventcheckbox = document.querySelector('#preventcheckbox');
+      preventcheckbox.addEventListener('click', function(event) {
+        event.preventDefault();
+      }, false);
+    </script>
+  </div>
+
+  <div>
+    <div id="parent1">
+      <button id="stopcapture">capture phase</button>
+    </div>
+    <div id="tips2"></div>
+
+    <script>
+      var tips2 = document.querySelector('#tips2');
+      var parent1 = document.querySelector('#parent1');
+      var stopcapture = document.querySelector('#stopcapture');
+
+      parent1.addEventListener('click', function(event) {
+        event.stopPropagation();
+        console.log(event);
+        tips2.innerHTML = '当前为捕获阶段，event的target已经获得' + event.target + ' 说明在开始事件传播时，点击事件触发的元素已经得到确认';
+      }, true);
+
+      stopcapture.addEventListener('click', function(event) {
+        tips2.innerHTML = '当前事件应该不会传播到这里';
+      }, true);
+    </script>
+  </div>
+
+  <div>
+    <div id="parent2">
+      <button id="stopcapture2">bubbing phase</button>
+    </div>
+    <div id="tips3"></div>
+
+    <script>
+      var tips3 = document.querySelector('#tips3');
+      var parent2 = document.querySelector('#parent2');
+      var stopcapture2 = document.querySelector('#stopcapture2');
+
+      parent2.addEventListener('click', function() {
+        tips3.innerHTML = '当前事件应该不会传播到这里';
+      }, false);
+
+      stopcapture2.addEventListener('click', function(event) {
+        event.stopPropagation();
+        tips3.innerHTML = '当前事件会在冒泡阶段被暂停';
+      }, false);
+    </script>
+  </div>
+
+  <div>
+    <button id="multihandle">多个响应</button>
+    <button id="multihandle2">多个响应被阻止</button>
+    <div id="multihandle3">
+      <button>冒泡先于捕获绑定</button>
+    </div>
+    <div id="tips4"></div>
+
+    <script>
+      // 当同一个元素存在同一个事件的多个响应时，事件被触发，多个响应会按照绑定是顺序依次执行。如果想取消之后的响应函数的执行，可以调用event.stopImmediatePropagation()函数
+      var tips4 = document.querySelector('#tips4');
+      var multihandle = document.querySelector('#multihandle');
+      var multihandle2 = document.querySelector('#multihandle2');
+      var multihandle3 = document.querySelector('#multihandle3');
+
+      function createHandle(index, stop) {
+        return function handle1(event) {
+          if (stop) {
+            event.stopImmediatePropagation();
+          }
+          tips4.innerHTML += 'handle' + index + '<br>';
+        }
+      }
+
+      multihandle.addEventListener('click', createHandle(1), false);
+      multihandle.addEventListener('click', createHandle(2), false);
+      multihandle.addEventListener('click', createHandle(3), false);
+
+      multihandle2.addEventListener('click', createHandle(1), false);
+      multihandle2.addEventListener('click', createHandle(2, true), false);
+      multihandle2.addEventListener('click', createHandle(3), false);
+
+      // 因吹斯听，当点击事件起始于multihandle3的子元素的时候，会按照冒泡和捕获的顺序执行并输出213
+      // 如果点击事件起始于multihandle3自己的时候，会不分阶段，直接按照绑定的顺序执行并输出123
+      multihandle3.addEventListener('click', createHandle(1), false);
+      multihandle3.addEventListener('click', createHandle(2), true);
+      multihandle3.addEventListener('click', createHandle(3), false);
+    </script>
+  </div>
+
+  <!-- 鼠标事件 -->
+  <div>
+    <div id="example-mouse1" class="example-mouse1">
+      <div id="example-mouse1-first" class="example-mouse1-first">first</div>
+      <div id="example-mouse1-second" class="example-mouse1-second">second</div>
+    </div>
+    <div id="example-mouse1-tips"></div>
+    <script>
+      var container = document.querySelector('#example-mouse1');
+      var first = document.querySelector('#example-mouse1-first');
+      var second = document.querySelector('#example-mouse1-second');
+      var tips = document.querySelector('#example-mouse1-tips');
+      
+      first.addEventListener('mousedown', function(event) {
+        console.log(event);
+        tips.innerHTML += 'first mousedown' + '<br>';
+      }, false);
+      first.addEventListener('mouseup', function(event) {
+        console.log(event);
+        tips.innerHTML += 'first mouseup' + '<br>';
+      }, false);
+      second.addEventListener('mousedown', function(event) {
+        console.log(event);
+        tips.innerHTML += 'second mousedown' + '<br>';
+      }, false);
+      second.addEventListener('mouseup', function(event) {
+        console.log(event);
+        tips.innerHTML += 'second mouseup' + '<br>';
+      }, false);
+    </script>
+  </div>
+</body>
+</html>
