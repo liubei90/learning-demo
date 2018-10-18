@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .drag-block {
+      width: 50px;
+      height: 50px;
+      background-color: #f0f0f0;
+    }
+    .section-pannel {
+      font-size: 0;
+      margin-top: 10px;
+    }
+    .section1, 
+    .section2 {
+      display: inline-block;
+      box-sizing: border-box;
+      width: 50%;
+      min-height: 200px;
+      background-color: #f0f0f0;
+      /* border: 1px solid #f0f0f0; */
+    }
+    .section1 .sub-section {
+      width: 50%;
+      height: 100px;
+      margin-top: 20px;
+      background-color: cornflowerblue;
+    }
+    .section2 .sub-section {
+      width: 50%;
+      height: 100px;
+      background-color: aqua;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div>
+      <div id="drag-block" class="drag-block" draggable="true">drag block</div>
+    </div>
+    <div class="section-pannel">
+      <div id="section1" class="section1">
+        <div class="sub-section"></div>
+      </div>
+      <div id="section2" class="section2">
+        <div class="sub-section"></div>
+      </div>
+    </div>
+
+    <script>
+      var block = document.querySelector('#drag-block');
+      var sect1 = document.querySelector('#section1');
+      var sect2 = document.querySelector('#section2');
+
+      block.addEventListener('dragstart', function(event) {
+        event.dataTransfer.setData('text/x-elem-id', event.target.id || '未知');
+        event.stopPropagation();
+        // event.preventDefault();
+      });
+
+      // block.addEventListener('dragover', function(event) {
+      //   event.stopPropagation();
+      //   event.preventDefault();
+      // });
+
+      sect1.addEventListener('dragenter', dragEnterHandler);
+      sect1.addEventListener('dragleave', dragLeaveHandler);
+      sect2.addEventListener('dragenter', dragEnterHandler);
+      sect2.addEventListener('dragleave', dragLeaveHandler);
+
+      function dragEnterHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        console.log('enter:' + (event.target.id || event.target.className));
+      }
+
+      function dragLeaveHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        console.log('leave:' + (event.target.id || event.target.className));
+      }
+    </script>
+  </div>
+</body>
+</html>
