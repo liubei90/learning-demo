@@ -1,9 +1,3 @@
-function parsePath(path) {
-  return function() {
-    ;
-  }
-}
-
 function Watcher(target, key, cb) {
   this.target = target;
   this.key = key;
