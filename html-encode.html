@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <button onclick="javascript:alert(1)">xss</button>
+    <!-- &#x61;会被浏览器解析成a -->
+    <button onclick="j&#x61;vascript:alert(1)">xss</button>
+    <script>
+      // 在脚本中的实体是不会被转换的
+      var test = 'j&#x61;vascript';
+    </script>
+  </div>
+
+  <div>
+    <div id="e1tips">111</div>
+    <script>
+      // 脚本中特殊的16进制编码会被转换，\u003a被转换为:
+      // 字符串被使用在界面时自动被转换
+      var tips = document.getElementById('e1tips');
+      var encodeStr = 'http\u003a//www.163.com';
+      tips.innerHTML = 'http://www.163.com';
+      tips.innerHTML += '\n';
+      tips.innerHTML += encodeStr;
+
+      // alert(encodeStr);
+      console.log(encodeStr);
+      // 说明js解释器遇到特殊编码时会直接转换为正常字符。
+      console.log(encodeStr.length); // 18
+      console.log(encodeStr.indexOf('003a')); // -1
+    </script>
+  </div>
+
+  <div>
+    <div id="e2tips"></div>
+    <script>
+      var e2tips = document.getElementById('e2tips');
+      e2tips.innerHTML = '<a href="location.href=http%3A%2F%2Fwww.163.com">url编码</a>';
+    </script>
+  </div>
+</body>
+</html>

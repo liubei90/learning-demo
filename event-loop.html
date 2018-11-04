@@ -41,5 +41,59 @@
 
     console.log(3);
   </script>
+
+
+<!-- dom的修改也是一个task你敢信 -->
+<div>
+  <div>
+    <button id="e1btn1">同步</button>
+    <button id=e1btn2>异步</button>
+    <button id=e1btn3>promise比较</button>
+  </div>
+  <div id="e1tips">
+    123
+  </div>
+  <script>
+    var e1btn1 = document.getElementById('e1btn1');
+    var e1btn2 = document.getElementById('e1btn2');
+    var e1btn3 = document.getElementById('e1btn3');
+    var e1tips = document.getElementById('e1tips');
+    function deplayTips(msg) {
+      var a = 0;
+      for (var i = 0; i < 100000; i++) {
+        for (var j = 0; j < 10000; j++) {
+          a++;
+        }
+      }
+      console.log('setTimeout', a);
+      e1tips.textContent = msg;
+    }
+
+    e1btn1.addEventListener('click', function() {
+      e1tips.textContent = 'begin1';
+      deplayTips('end1');
+    });
+    e1btn2.addEventListener('click', function() {
+      e1tips.textContent = 'begin2';
+      setTimeout(function(){
+        deplayTips('end2');
+      }, 0);
+    });
+    e1btn3.addEventListener('click', function() {
+      e1tips.textContent = 'begin3';
+      Promise.resolve().then(function() {
+        // 在microTask中修改dom，会添加一个新的消息到microTask队列，所以结果是in promise loop 覆盖了end3
+        // e1tips.textContent = 'in promise loop';
+        var a = 0;
+        for(var i = 0; i < 1000000000; i++) {
+          a++;
+        }
+        console.log('in promise', a);
+      });
+      e1tips.textContent = 'end3';
+    });
+  </script>
+</div>
+
 </body>
 </html>
