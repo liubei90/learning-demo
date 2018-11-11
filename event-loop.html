@@ -69,21 +69,26 @@
       e1tips.textContent = msg;
     }
 
+    console.log('DOM操作生效就是能在界面上看到变化，js修改了DOM不会立即反映到界面，需要js线程将执行权交给渲染线程，由渲染线程重绘renderTree');
+    console.log('生效操作执行时机和microTask类似，都是一个时间循环结束之前执行。但是和microTask不一样，因为生效操作是渲染线程和js线程是互斥的');
     e1btn1.addEventListener('click', function() {
+      console.log('同步修改的时候，dom操作都是在同一个task内被执行，生效也是在该task结束之前');
       e1tips.textContent = 'begin1';
       deplayTips('end1');
     });
     e1btn2.addEventListener('click', function() {
+      console.log('将begin操作放在当前task中，将end操作放在下一个task中，begin会在下一个task之前生效');
       e1tips.textContent = 'begin2';
       setTimeout(function(){
         deplayTips('end2');
       }, 0);
     });
     e1btn3.addEventListener('click', function() {
+      console.info('当前代码在火狐developer edition 64.0b8版本中运行结果不对');
+      console.log('在microTask中修改DOM，会覆盖掉在当前task中进行的相同修改。DOM修改的生效操作是在microTask之后进行的');
       e1tips.textContent = 'begin3';
       Promise.resolve().then(function() {
-        // 在microTask中修改dom，会添加一个新的消息到microTask队列，所以结果是in promise loop 覆盖了end3
-        // e1tips.textContent = 'in promise loop';
+        e1tips.textContent = 'in promise loop';
         var a = 0;
         for(var i = 0; i < 1000000000; i++) {
           a++;

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <section>
+    <div>
+      <div id="exp1_p1">
+        parent1 <span id="exp1_child">hahha</span>
+      </div>
+      <div id="exp1_p2">
+        parent2
+      </div>
+    </div>
+    <script>
+      // 将一个dom插入到另一个dom中，会先从元dom的父元素中删除，也即是一个dom只能同时有一个父dom（parentNode）
+      var exp1_p1 = document.getElementById('exp1_p1');
+      var exp1_p2 = document.getElementById('exp1_p2');
+      var exp1_child = document.getElementById('exp1_child');
+
+      setTimeout(function() {
+        exp1_p2.appendChild(exp1_child);
+      }, 2000);
+    </script>
+  </section>
+</body>
+</html>

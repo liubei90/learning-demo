@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <section>
+    <div>
+
+    </div>
+    <script>
+      var exp1_b1 = new ArrayBuffer(12);
+      var exp1_v1 = new Uint8Array(exp1_b1);
+      var exp1_v2 = new Uint16Array(exp1_b1);
+      var exp1_v3 = new Uint32Array(exp1_b1);
+
+      for (var i = 0; i < exp1_v1.length; i++) {
+        exp1_v1[i] = 3;
+      }
+
+      console.log(exp1_v1);
+      console.log(exp1_v2);
+      console.log(exp1_v3);
+
+      // 超出范围时，只取最后的位
+      exp1_v1[0] = 10000;
+      // 
+      console.log(exp1_v2[0]);
+    </script>
+  </section>
+
+  <section>
+    <div>
+
+    </div>
+    <script>
+      console.log('exp2---------------');
+      var exp2_obj1 = { name: 'liu贝' };
+      var exp2_blob1 = new Blob([JSON.stringify(exp2_obj1)]);
+
+      console.log(exp2_blob1);
+
+      var exp2_reader = new FileReader();
+      exp2_reader.onload = function() {
+        console.log(exp2_reader.result);
+      }
+      exp2_reader.readAsArrayBuffer(exp2_blob1);
+    </script>
+  </section>
+</body>
+</html>
