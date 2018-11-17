@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <section>
+    <div>
+      <button id="exp1_btn">example1</button>
+    </div>
+    <script>
+      var exp1Btn = document.getElementById('exp1_btn');
+      
+      exp1Btn.addEventListener('click', function() {
+        var exp1Xhr = new XMLHttpRequest();
+
+        exp1Xhr.onreadystatechange = function() {
+          console.log(exp1Xhr.readyState, exp1Xhr.status, exp1Xhr.getResponseHeader('Content-Type'), exp1Xhr.responseText);
+        }
+        exp1Xhr.open('GET', 'http://localhost:9001/str');
+        exp1Xhr.send();
+      });
+    </script>
+  </section>
+
+  <section>
+    <div>
+      <button id="exp2_btn">jsonType</button>
+    </div>
+    <script>
+      var exp2Btn = document.getElementById('exp2_btn');
+      
+      exp2Btn.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+
+        // xhr.responseType = '';
+        xhr.responseType = 'json';
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            // xhr.responseType = 'json'; // 报错 Failed to set the 'responseType' property on 'XMLHttpRequest': The response type cannot be set if the object's state is LOADING or DONE.
+            console.log(xhr.response);
+            // console.log(xhr.responseText); // 报错 Failed to read the 'responseText' property from 'XMLHttpRequest': The value is only accessible if the object's 'responseType' is '' or 'text' (was 'json').
+          }
+        }
+        xhr.open('GET', 'http://localhost:9001/json');
+        xhr.send();
+      }); 
+    </script>
+  </section>
+
+  <section>
+    <div>
+      <button id="exp3_btn1">timeout</button>
+      <button id="exp3_btn2">noStatus</button>
+    </div>
+    <script>
+      var exp3Btn1 = document.getElementById('exp3_btn1');
+      var exp3Btn2 = document.getElementById('exp3_btn2');
+      exp3Btn1.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:9001/timeout');
+
+        xhr.onreadystatechange = function() {
+          console.log(xhr.readyState, xhr.status); // 4 0
+        }
+        xhr.send();
+      });
+
+      exp3Btn2.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:9001/no_status');
+        xhr.onreadystatechange = function() {
+          console.log(xhr.readyState, xhr.status); // 2 200  \n 4 200
+        }
+        xhr.send();
+      });
+    </script>
+  </section>
+
+  <!-- 客户端设置超时 -->
+  <section>
+    <div>
+      <button id="exp4_btn1">client timeout</button>
+      <script>
+        var exp4Btn1 = document.getElementById('exp4_btn1');
+        exp4Btn1.addEventListener('click', function() {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', 'http://localhost:9001/timeout');
+          xhr.onreadystatechange = function() {
+            console.log(xhr.readyState, xhr.status);
+          }
+          xhr.ontimeout = function() {
+            console.log('请求超时了。。。');
+          }
+          xhr.timeout = 500;
+          xhr.send();
+        });
+      </script>
+    </div>
+  </section>
+
+  <!-- 上传 -->
+  <section>
+    <div>
+      <div>
+          <input type="file" id="exp5_file1">
+          <input type="file" id="exp5_file2">
+          <button id="exp5_btn1">上传进度监听</button>
+      </div>
+      <script>
+        var exp5File1 = document.getElementById('exp5_file1');
+        exp5File1.addEventListener('change', function(event) {
+          if (exp5File1.files && exp5File1.files.length) {
+            var file = exp5File1.files[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+              console.log(reader.result);
+          
+              var boundary = '----WebKitFormBoundaryMH8HZd6OvM2jmllK';
+              var fileStr = '';
+              var uintArr = new Uint8Array(reader.result);
+
+
+              var splitStr = '--' + boundary;
+              var dataStr = splitStr;
+              dataStr += '\r\n';
+              dataStr += 'Content-Disposition: form-data; name="file"; filename="' + file.name + '"';
+              dataStr += '\r\n';
+              dataStr += 'Content-Type: ' + file.type;
+              dataStr += '\r\n';
+              dataStr += '\r\n';
+              /// 将上半部分转换为ArrayBuffer
+              var beforArr = new ArrayBuffer(dataStr.length);
+              var beforTypeArr = new Uint8Array(beforArr);
+              for (var i = 0; i < beforTypeArr.length; i++) {
+                beforTypeArr[i] = dataStr.charCodeAt(i);
+              }
+
+              dataStr = '';
+              dataStr += '\r\n';
+              dataStr += splitStr;
+              dataStr += '\r\n';
+              dataStr += 'Content-Disposition: form-data; name="name"';
+              dataStr += '\r\n';
+              dataStr += '\r\n';
+              dataStr += 'li';
+              dataStr += '\r\n';
+              dataStr += splitStr + '--';
+
+              /// 将下半部分转换为ArrayBuffer
+              var endArr = new ArrayBuffer(dataStr.length);
+              var endTypeArr = new Uint8Array(endArr);
+              for (var i = 0; i < endTypeArr.length; i++) {
+                endTypeArr[i] = dataStr.charCodeAt(i);
+              }
+
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', 'http://localhost:9001/upload');
+              xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+              console.log(dataStr.length, fileStr.length, file.size);
+              // Content-Length请求头不能被设置，为unself
+              // xhr.setRequestHeader('Content-Length', '' + dataStr.length);
+              xhr.onreadystatechange = function() {
+                console.log(xhr.readyState, xhr.status);
+              }
+
+              xhr.upload.onloadstart = function() {
+                console.log('onloadstart');
+              }
+              xhr.upload.onprogress = function(event) {
+                console.log('onprogress', event.loaded, event.total);
+              }
+              xhr.upload.onloadend = function() {
+                console.log('onloadend');
+              }
+              
+              var xhrArr = new ArrayBuffer(beforTypeArr.length + uintArr.length + endTypeArr.length);
+              var xhrTypeArr = new Uint8Array(xhrArr);
+              xhrTypeArr.set(beforTypeArr);
+              xhrTypeArr.set(uintArr, beforTypeArr.length);
+              xhrTypeArr.set(endTypeArr, beforTypeArr.length + uintArr.length);
+              console.log(xhrTypeArr);
+              xhr.send(xhrArr);
+              // 发送文本是可行的，发送二进制文件（图片）时，Content-Length和字符串的长度不一致,
+              // 猜测原因是，浏览器表示字符串使用的是unicode编码，如果我们传入字符串，在unicode编码下这些字符串的字节数应该是字符长度的两倍（unicode编码方式 存疑）
+              // xhr.send(dataStr);
+            }
+            reader.readAsArrayBuffer(file);
+          }
+        });
+
+        var exp5File2 = document.getElementById('exp5_file2');
+        exp5File2.addEventListener('change', function(event) {
+          var file = exp5File2.files[0];
+          if (!file) return;
+
+          var formData = new FormData();
+          formData.append('file', file);
+          formData.append('name', 'liu');
+          
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', 'http://localhost:9001/upload');
+          xhr.onreadystatechange = function() {
+            console.log(xhr.readyState, xhr.status);
+          }
+          xhr.send(formData);
+        });
+      
+        var exp5Btn1 = document.getElementById('exp5_btn1');
+        exp5Btn1.addEventListener('click', function() {
+          var xhr = new XMLHttpRequest();
+          
+          xhr.open('POST', 'http://localhost:9001/post_str');
+          xhr.onreadystatechange = function() {
+            console.log(xhr.readyState, xhr.status);
+          }
+          xhr.upload.onprogress = function(event) {
+            console.log('onprogress', event.loaded, event.total);
+          }
+          xhr.send('缘来则去，缘聚则散，缘起则生，缘落则灭，万法缘生，皆系缘分。 缘来天注定，缘去人自夺，种如是因，收如是果，一切唯心造。');
+        });
+      </script>
+      <div>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <input type="text" name="name">
+          <input type="file" name="file">
+          <button type="submit">submit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
