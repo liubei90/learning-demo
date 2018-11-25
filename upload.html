@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 表单提交，不能异步 -->
+  <section>
+    <form action="./upload" method="POST" enctype="multipart/form-data">
+      <input type="text" name="name">
+      <input type="file" name="file">
+      <input type="submit" value="提交">
+    </form>
+  </section>
+
+  <!-- formatData -->
+  <section>
+    <div>
+      <input type="file" id="exp2_ipt1">
+      <button id="exp2_btn1">upload</button>
+    </div>
+    <script>
+      var exp2Ipt1 = document.getElementById('exp2_ipt1');
+      var exp2Btn1 = document.getElementById('exp2_btn1');
+
+      function uploadFileByFormData(file) {
+        var formData = new FormData();
+
+        formData.append('file', file);
+        formData.append('name', 'liu');
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function() {
+          ;
+        }
+        xhr.open('POST', './upload');
+        xhr.send(formData);
+      }
+
+      var gFile;
+      exp2Ipt1.addEventListener('change', function() {
+        var file = exp2Ipt1.files[0];
+        if (!file) return;
+
+        gFile=file; // 给按钮点击事件使用
+        // uploadFileByFormData(file);
+      });
+
+      exp2Btn1.addEventListener('click', function() {
+        if (!gFile) return;
+
+        uploadFileByFormData(gFile);
+      });
+    </script>
+  </section>
+
+  <!-- 自己拼接data -->
+  <section>
+    <div>
+      <input type="file" id="exp3_ipt1">
+      <button id="exp3_btn1">upload</button>
+    </div>
+    <script>
+      function utf16ToUtf8(str) {
+        var i, code, len = str.length, res = [];
+
+        for (i = 0; i < len; i++) {
+          code = str.charCodeAt(i);
+
+          if (code > 0x0 && code <= 0x7F) {
+            res.push(str.charAt(i));
+          } else if (code >= 0x80 && code <= 0x7FF) {
+            res.push(
+              String.fromCharCode(0xC0 | ((code >> 6) & 0x1F)),
+              String.fromCharCode(0x80 | (code & 0x3F))
+            );
+          } else if (code >= 0x800 && code <= 0xFFFF) {
+            res.push(
+              String.fromCharCode(0xE0 | ((code >> 12) & 0xF)),
+              String.fromCharCode(0x80 | ((code >> 6) & 0x3F)),
+              String.fromCharCode(0x80 | (code & 0x3F))
+            );
+          }
+        }
+
+        return res.join('');
+      }
+
+      var exp3Ipt1 = document.getElementById('exp3_ipt1');
+      var exp3Btn1 = document.getElementById('exp3_btn1');
+      var gFile3;
+      var nextLine = '\r\n';
+      var boundary = '----WebKitFormBoundaryGpn8z2Dv8e6v4EkW';
+
+      exp3Ipt1.addEventListener('change', function() {
+        gFile3 = exp3Ipt1.files[0];
+      });
+
+      exp3Btn1.addEventListener('click', function() {
+        if (!gFile3) return;
+
+        var reader = new FileReader();
+
+        reader.onload = function() {
+          var fileStr = reader.result;
+          var spliteStr = '--' + boundary;
+          var postBody = spliteStr;
+          postBody += nextLine;
+          postBody += 'Content-Disposition: form-data; name="file"; filename="' + gFile3.name + '"';
+          postBody += nextLine;
+          postBody += 'Content-Type: ' + gFile3.type;
+          postBody += nextLine;
+          postBody += nextLine;
+          postBody += fileStr;
+          postBody += nextLine;
+          postBody += spliteStr;
+          postBody += nextLine;
+          postBody += 'Content-Disposition: form-data; name="name"';
+          postBody += nextLine;
+          postBody += nextLine;
+          postBody += 'liu';
+          postBody += nextLine;
+          postBody += spliteStr + '--';
+          // postBody += nextLine;
+
+          // console.log(postBody);
+          
+          var utf8Str = utf16ToUtf8(postBody);
+          console.log(utf8Str);
+          var binaryArr = new ArrayBuffer(utf8Str.length);
+          var tArr = new Uint8Array(binaryArr);
+          var curIndex = 0, code;
+          for (var i = 0; i < utf8Str.length; i++) {
+            tArr[i] = utf8Str.charCodeAt(i);
+          }
+
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+            ;
+          }
+          xhr.open('POST', './upload');
+          xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+          xhr.send(binaryArr);
+          // xhr.send(binaryArr);
+        }
+
+        reader.readAsText(gFile3);
+      });
+    </script>
+  </section>
+</body>
+</html>

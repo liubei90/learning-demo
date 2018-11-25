@@ -232,5 +232,94 @@
       </div>
     </div>
   </section>
+
+  <!-- 方法 -->
+  <section>
+    <div>
+      <button id="exp6_btn1">open</button>
+      <button id="exp6_btn2">send</button>
+      <button id="exp6_btn3">overrideMimeType</button>
+      <button id="exp6_btn4">abort</button>
+    </div>
+    <script>
+      var exp6Btn1 = document.getElementById('exp6_btn1');
+      var exp6Btn2 = document.getElementById('exp6_btn2');
+      var exp6Btn3 = document.getElementById('exp6_btn3');
+      var exp6Btn4 = document.getElementById('exp6_btn4');
+
+      exp6Btn1.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          console.log(xhr.readyState, xhr.status);
+        }
+        xhr.open('GET', 'http://localhost:9001/json', true, 'liu', '123456');
+        xhr.send();
+        // xhr.open('GET', 'http://localhost:9001/json');
+      });
+
+      exp6Btn2.addEventListener('click', function() {
+        ;
+      });
+
+      exp6Btn3.addEventListener('click', function() {
+        ;
+      });
+
+      exp6Btn4.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          console.log(xhr.readyState, xhr.status, xhr.responseText);
+          if (xhr.readyState === 1) {
+            xhr.abort(); // 当readyState为1时，请求还没发出，没法停止
+          } else if (xhr.readyState === 4) { // 2， 3， 4
+            xhr.abort(); // status变成0
+          }
+        }
+        xhr.open('GET', 'http://localhost:9001/json');
+        xhr.send();
+        // xhr.abort();
+      });
+    </script>
+  </section>
+
+  <!-- 获取响应头 -->
+  <section>
+    <div>
+        <button id="exp7_btn1">getResponseHeader</button>
+        <button id="exp7_btn2">setRequestHeaders</button>
+    </div>
+    <script>
+      var exp7Btn1 = document.getElementById('exp7_btn1');
+      var exp7Btn2 = document.getElementById('exp7_btn2');
+
+      exp7Btn1.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            console.log(xhr.getAllResponseHeaders()); // date: Sun, 18 Nov 2018 04:28:36 GMT\r\nconnection: keep-alive\r\nx-powered-by: Express\r\ncontent-length: 0
+            console.log(xhr.getResponseHeader('Date')); // Sun, 18 Nov 2018 04:25:44 GMT
+            // console.log(xhr.getResponseHeader('Set-Cookie')); // Refused to get unsafe header "Set-Cookie" 
+          }
+        }
+        xhr.open('POST', 'http://localhost:9001/set_cookie');
+        xhr.send();
+      });
+
+      exp7Btn2.addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            ;
+          }
+        }
+        xhr.open('POST', 'http://localhost:9001/set_cookie');
+        xhr.setRequestHeader('Content-type', 'text/plain');
+        xhr.setRequestHeader('Content-type', 'charset=utf-8');
+        xhr.send();
+
+        // Content-type: text/plain, charset=utf-8
+      });
+    </script>
+  </section>
 </body>
 </html>

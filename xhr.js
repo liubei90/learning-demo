@@ -75,6 +75,22 @@ app.use('/post_str', function(req, res, next) {
   }
 });
 
+app.use('/set_cookie', function(req, res, next) {
+  var method = req.method;
+
+  if (method === 'POST') {
+    res.cookie('uid', '123').end();
+  }
+});
+
+app.use('/clear_cookie', function(req, res, next) {
+  var method = req.method;
+
+  if (method === 'POST') {
+    res.clearCookie('uid').end();
+  }
+});
+
 app.use(function(req, res, next) {
   res.status(404).end();
 });
