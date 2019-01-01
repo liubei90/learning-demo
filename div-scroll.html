@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wrapper {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .item {
+      height: 250px;
+      border: 1px solid #000;
+    }
+
+    .tips {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #afa;
+      width: 100px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="sub1" class="item">
+      平林漠漠烟如织，寒山一带伤心碧。暝色入高楼，有人楼上愁。<br>
+      玉阶空伫立，宿鸟归飞急。何处是归程？长亭连短亭。
+    </div>
+    <div id="sub2" class="item">
+      i can
+    </div>
+    <div id="sub3" class="item">
+      trust myself
+    </div>
+    <div id="sub4" class="item">
+      i am fine
+    </div>
+    <div id="sub5" class="item">
+      yes!
+    </div>
+
+    <div class="tips">
+
+    </div>
+
+    <script>
+      var offset = 10;
+      var wrapper = document.querySelector('.wrapper');
+      var tips = document.querySelector('.tips');
+      var subs = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5'].map(function(id) {
+        return document.querySelector('#' + id);
+      });
+
+      wrapper.addEventListener('scroll', function(event) {
+        updateTips();
+      });
+
+      updateTips();
+
+      function updateTips() {
+        const current = getTopElem();
+
+        tips.textContent = current && current.innerHTML || '无';
+      }
+
+      function getTopElem() {
+        var rect;
+        var i;
+        for (i = 0; i < subs.length; i++) {
+          rect = subs[i].getBoundingClientRect();
+          if (rect.bottom >= offset && rect.top < offset) {
+            return subs[i];
+          }
+        }
+      }
+    </script>
+  </div>
+</body>
+</html>
