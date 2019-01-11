@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div id="content"></div>
+  <script>
+    // document.querySelector('#content').innerHTML = 
+    //   marked('# Marked in browser\n\nRendered by **marked**.');
+
+      // var render = new marked.Renderer();
+
+      // render.code = function(code, languge, escaped) {
+      //   console.log(code, languge, escaped);
+      //   return code;
+      // }
+
+      // document.querySelector('#content').innerHTML = 
+      //   marked('# Marked in browser\n\nRendered by **marked**.\n\n' +
+      //   '```python\n' +
+      //   'import jwt\n' +
+      //   'import time\n' +
+      //   '```\n' +
+      //   '```java\n' +
+      //   'import jwt\n' +
+      //   'import time\n' +
+      //   '```\n' +
+      //   '', { renderer: render });
+
+      var render = new marked.Renderer();
+
+      render.mycode = function(code, languge, escaped) {
+        console.log(code, languge, escaped);
+        return code;
+      }
+
+      const tokens = marked.lexer('# Marked \n\n' +
+        '```merge-python\n' +
+        'import jwt\n' +
+        'import time\n' +
+        '```\n' +
+        '```merge-java\n' +
+        'import jwt\n' +
+        'import time\n' +
+        '```\n' +
+        '');
+
+      console.log(JSON.parse(JSON.stringify(tokens)));
+
+      for (var i = 0; i < tokens.length; i++) {
+        if (tokens[i].type === 'code')
+          tokens[i].type = 'mycode'
+      }
+
+      console.log(marked.parser(tokens, { renderer: render }));
+
+  </script>
+</body>
+</html>

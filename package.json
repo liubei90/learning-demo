@@ -19,6 +19,7 @@
   "homepage": "https://github.com/liubei90/vue-doc#readme",
   "dependencies": {
     "express": "^4.16.4",
+    "marked": "^0.6.0",
     "multiparty": "^4.2.1"
   }
 }
