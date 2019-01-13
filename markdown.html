@@ -6,6 +6,30 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+  .code-container {
+    position: relative;
+    padding-top: 20px;
+  }
+  .code-container ul {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px;
+  }
+  .code-container ul li {
+    display: inline;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, .5);
+  }
+  /* .code-panel + .code-panel {
+    display: none;
+  } */
+
+  .code-panel {
+    display: none;
+  }
+  </style>
 </head>
 <body>
   <div id="content"></div>
@@ -32,33 +56,170 @@
       //   '```\n' +
       //   '', { renderer: render });
 
-      var render = new marked.Renderer();
+      var mdStr = '# Marked \n\n' +
+        '```python-merge-group\n' +
+        '// python\n' +
+        'import jwt\n' +
+        'import python\n' +
+        '```\n' +
+        '```java-merge-group\n' +
+        '// java\n' +
+        'import jwt\n' +
+        'import java\n' +
+        '```\n' +
+        '```java\n' +
+        'import aa\n' +
+        'import bbb\n' +
+        '```\n' +
+        '```java-merge-demo\n' +
+        'import aa\n' +
+        'import bbb11111\n' +
+        '```\n' +
+        '```java-merge-demo\n' +
+        'import aa\n' +
+        'import 22222b\n' +
+        '```\n';
+      
+      function getSheet(code, languge, escaped) {
+        var nav = '';
+        var context = '';
+        var containerId = 'marked-code-' + Math.ceil(Math.random()*100000);
+          
+        for (var i = 0; i < code.length; i++) {
+          var contextId = containerId + '-' + i;
+          nav += '<li data-code-id="' + contextId + '">' + (languge[i] ? languge[i] : ' ') + '</li>';
+          context += '<div id="' + contextId + '" class="code-panel"><pre><code>' + code[i] + '</code></pre></div>';
+        }
 
-      render.mycode = function(code, languge, escaped) {
-        console.log(code, languge, escaped);
-        return code;
+        return '<div id="' + containerId + '" class="code-container"><div><ul>' + nav + '</ul></div>' + context + '</div>';
       }
 
-      const tokens = marked.lexer('# Marked \n\n' +
-        '```merge-python\n' +
-        'import jwt\n' +
-        'import time\n' +
-        '```\n' +
-        '```merge-java\n' +
-        'import jwt\n' +
-        'import time\n' +
-        '```\n' +
-        '');
+      function evalCodeScript() {
+        var scriptStr = '(function() {' +
+          'var containers = document.querySelectorAll(".code-container");' +
+          'containers.forEach(function(container) {' + 
+            'var codePanels = container.querySelectorAll(".code-panel");' +
+            'container.addEventListener("click", function(event) {' +
+              'var target = event.target;' +
+              'var contextId = target.dataset["codeId"];' +
+              'console.log(contextId, "------");' +
+              'if (contextId) {' +
+                'var context = document.querySelector("#" + contextId);' +
+                'if (context) {' +
+                  'codePanels.forEach(function(panel) {' +
+                    'panel.style.display = "none";' +
+                  '});' +
+                  'context.style.display = "block";' +
+                '}' +
+              '}' +
+            '});' +
+          '})' +
+        '})();';
+
+        eval(scriptStr);
+      }
+
+      function getSheet2(code, languge, escaped) {
+        var nav = '';
+        var context = '';
+        var containerId = 'marked-code-' + Math.ceil(Math.random()*100000);
+        var styleStr = '';
+          
+        for (var i = 0; i < code.length; i++) {
+          var contextId = containerId + '-' + i;
+          nav += '<li data-code-id="' + contextId + '" ' + contextId + '>' + (languge[i] ? languge[i] : ' ') + '</li>';
+          context += '<div class="code-panel" ' + contextId + '><pre><code>' + code[i] + '</code></pre></div>';
+          styleStr += '.code-container[' + contextId + '] .code-panel[' + contextId + '] { display: block; }\n' +
+            '.code-container[' + contextId + '] li[' + contextId + '] { background-color: #fff; }';
+        }
+
+        return '<style>' + styleStr + '</style><div class="code-container" ' + contextId + '><div><ul>' + nav + '</ul></div>' + context + '</div>';
+      }
+
+      function evalCodeScript2() {
+        var scriptStr = '(function() {\n' +
+          'var context = document.querySelector("#content");\n' +
+          'context.addEventListener("click", function(event) {\n' +
+            'var target = event.target;\n' +
+            'var containerId = target.dataset["codeId"];\n' +
+            'console.log(containerId, "------");\n' +
+            'if (containerId) {\n' +
+              'var container = target.parentNode.parentNode.parentNode;\n' +
+              'if (container) {\n' +
+                'for (var i = 0; i < container.attributes.length; i++) {\n' +
+                  'if (/marked-code-/.test(container.attributes.item(i).name)) {\n' +
+                    'container.removeAttribute(container.attributes.item(i).name);\n' +
+                  '}\n' +
+                '}\n' +
+                'container.setAttribute(containerId, true);\n' +
+              '}\n' +
+            '}\n' +
+          '});\n' +
+        '})();\n';
+
+        eval(scriptStr);
+      }
+
+      var render = new marked.Renderer();
+
+      render.code = function(code, languge, escaped) {
+        // console.log(code, languge, escaped);
+        if (Array.isArray(code)) {
+          return getSheet2(code, languge, escaped);
+        } else {
+          return '<pre><code>' + code + '</code></pre>';
+        }
+      }
+
+      const tokens = marked.lexer(mdStr);
 
       console.log(JSON.parse(JSON.stringify(tokens)));
 
-      for (var i = 0; i < tokens.length; i++) {
-        if (tokens[i].type === 'code')
-          tokens[i].type = 'mycode'
+      const codeMap = {};
+
+      for (var i = 0; i < tokens.length; ) {
+        if (tokens[i].type === 'code' && /-merge-/.test(tokens[i].lang)) {
+          var lag = tokens[i].lang.split('-merge-');
+          var text = tokens[i].text;
+
+          if (lag.length > 1) {
+            var lang = lag[0];
+            var group = lag[1];
+
+            if (!codeMap[group]) {
+              codeMap[group] = tokens[i];
+              tokens[i].text = [text];
+              tokens[i].lang = [lang];
+            } else {
+              codeMap[group].text.push(text);
+              codeMap[group].lang.push(lang);
+              tokens.splice(i, 1);
+              continue;
+            }
+          }
+        }
+        i++;
       }
 
-      console.log(marked.parser(tokens, { renderer: render }));
+      console.log(JSON.parse(JSON.stringify(tokens)));
 
+      var htmlStr = marked.parser(tokens, { renderer: render });
+
+      console.log(htmlStr);
+
+      document.querySelector('#content').innerHTML = htmlStr;
+      evalCodeScript2();
+
+      // document.querySelector('#content').innerHTML = htmlStr;
+
+      // evalCodeScript();
+
+      // setTimeout(function() {
+      //   document.querySelector('#content').innerHTML = htmlStr;
+
+      //   evalCodeScript();
+      //   console.log('reset, hahha');
+      // }, 5000);
   </script>
 </body>
 </html>
