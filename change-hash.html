@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  .box {
+    height: 1000px;
+    border: 1px solid #000;
+    margin-top: 50px;
+  }
+  </style>
+</head>
+<body>
+  <!-- <div>
+    <div id="box1" class="box">1</div>
+    <div id="box2" class="box">2</div>
+    <div id="box3" class="box">3</div>
+    <div id="box4" class="box">4</div>
+    <script>
+      var i = 0;
+      setInterval(function() {
+        console.log(window.location.hash);
+        i = (i % 4) + 1;
+        window.location.hash = 'box' + i;
+      }, 2000);
+
+      window.addEventListener('hashchange', function() {
+        console.log('hashchange', window.location.hash);
+      });
+    </script>
+  </div> -->
+
+  <div>
+    <div>
+      <input id="pathInput" type="text"><button id="pushBtn">push</button><button id="replaceBtn">replace</button>
+    </div>
+    <script>
+      var base = {
+        current: '',
+        transitionTo(location, onComplete) {
+          if (location === this.current) {
+            return;
+          }
+
+          this.current = location;
+          onComplete && onComplete(this.current);
+
+          console.log('current path:', this.current);
+        },
+      }
+
+      function createHash() {
+        ensureSlash();
+
+        var hash = Object.create(base);
+        hash.push = function(path) {
+          this.transitionTo(path, function(hash) {
+            pushHash(hash);
+          });
+        }
+        hash.replace = function(path) {
+          this.transitionTo(path, function(hash) {
+            replaceHash(hash);
+          });
+        }
+        hash.getCurrentLocation = function() {
+          return getHash();
+        }
+        hash.bindHashChangeEvent = function() {
+          var self = this;
+          window.addEventListener('hashchange', function() {
+            self.transitionTo(getHash(), function(hash) {
+              replaceHash(hash);
+            });
+          });
+        }
+
+        return hash;
+      }
+
+      function createH5(basePath) {
+        var h5 = Object.create(base);
+        h5.push = function(path) {
+          this.transitionTo(path, function(fullPath) {
+            pushState(cleanPath(basePath + fullPath));
+          });
+        }
+        h5.replace = function(path) {
+          this.transitionTo(path, function(fullPath) {
+            pushState(cleanPath(basePath + fullPath), true);
+          });
+        }
+        h5.getCurrentLocation = function() {
+          return getLocation(basePath);
+        }
+        var initLocation = getLocation(basePath);
+        window.addEventListener('popstate', function(e) {
+          if (initLocation === getLocation(basePath)) return;
+
+          h5.transitionTo(getLocation(basePath));
+        });
+        return h5;
+      }
+
+      var isH5 = true;
+      var router = {
+        history: isH5 ? createH5('/') : createHash(),
+        init() {
+          var history = this.history;
+          history.transitionTo(history.getCurrentLocation(), function() {
+            if (!isH5) {
+              history.bindHashChangeEvent();
+            }
+          });
+        },
+        push(path) {
+          this.history.push(path);
+        },
+        replace(path) {
+          this.history.replace(path);
+        }
+      }
+
+      router.init();
+
+
+      function getHash() {
+        var hash = window.location.hash;
+        var hashIndex = hash.indexOf('#');
+        return hashIndex === -1 ? '' : decodeURI(hash.slice(hashIndex + 1));
+      }
+
+      function pushHash(hash) {
+        window.location.hash = hash;
+      }
+
+      function replaceHash(hash) {
+        var href = window.location.href;
+        var index = href.indexOf('#');
+        var base = index !== -1 ? href.slice(0, index) : href;
+
+        window.location.replace(base + '#' + hash);
+      }
+
+      function ensureSlash() {
+        var hash = getHash();
+        if (hash.charAt(0) === '/') {
+          return true;
+        }
+        replaceHash('/' + hash);
+      }
+
+      function getLocation(base) {
+        var path = window.location.pathname;
+
+        if (base && path.indexOf(base) === 0) {
+          path = path.slice(base.length);
+        }
+
+        return (path || '/') + window.location.search + window.location.hash;
+      }
+
+      function pushState(url, replace) {
+        if (replace) {
+          window.history.replaceState(null, '', url);
+        } else {
+          window.history.pushState(null, '', url);
+        }
+      }
+
+      function cleanPath(path) {
+        return path.replace(/\/\//g, '/');
+      }
+
+
+      var pathInput = document.querySelector('#pathInput');
+      var pushBtn = document.querySelector('#pushBtn');
+      var replaceBtn = document.querySelector('#replaceBtn');
+      
+      pushBtn.addEventListener('click', function() {
+        var path = pathInput.value;
+
+        if (!path) return;
+
+        router.push(path);
+      });
+      replaceBtn.addEventListener('click', function() {
+        var path = pathInput.value;
+
+        if (!path) return;
+
+        router.replace(path);
+      });
+    </script>
+  </div>
+</body>
+</html>
