@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="navBtn">nav</button>
+
+  <script>
+    var navBtn = document.querySelector('#navBtn');
+
+    navBtn.addEventListener('click', function() {
+      // var newPath = window.location.pathname + '#' + Math.random();
+      // window.history.pushState({ }, '',  newPath);
+      window.location.hash = Math.random();
+    });
+
+    window.addEventListener('popstate', function() {
+      console.log('popstate');
+    });
+
+    window.addEventListener('hashchange', function() {
+      console.log('hashchange');
+    });
+  </script>
+</body>
+</html>
