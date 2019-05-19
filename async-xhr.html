@@ -18,6 +18,19 @@
         console.log('-------请求结束');
       })
       console.log('-------点击事件结束，但是网络请求并没有结束');
+
+
+      // 多次下载的方式
+      var urls = ['https://www.apiopen.top/journalismApi', 'https://www.apiopen.top/journalismApi', 'https://www.apiopen.top/journalismApi', 'https://www.apiopen.top/journalismApi'];
+      var allPromise = [];
+      urls.forEach(function(u) {
+        allPromise.push(getWebsitePage1(u));
+      });
+
+      Promise.all(allPromise).then((values) => {
+        console.log(values);
+      });
+
     });
 
     // function getWebsitePage(url) {
