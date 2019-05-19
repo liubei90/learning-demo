@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="xhrbtn">获取百度首页代码</button>
+
+  <script>
+    var btn = document.querySelector('#xhrbtn');
+    btn.addEventListener('click', function() {
+      getWebsitePage('./index.js').then(function(res) {
+        console.log(res);
+      })
+    });
+
+    function getWebsitePage(url) {
+      return new Promise(function(resolve) {
+        var xhr = new XMLHttpRequest();
+        // 第3个参数代表，这个请求会是异步请求。异步请求对前端很重要
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+          // 当请求结束（xhr.readyState === 4），并且请求成功了（xhr.status === 200）
+          // 调用resolve返回异步请求结果xhr.responseText
+          // 这一步是在xhr.send()函数调用之后的某个时刻执行的。
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            resolve(xhr.responseText);
+          }
+        }
+        xhr.send();
+      });
+    }
+
+  </script>
+</body>
+</html>
