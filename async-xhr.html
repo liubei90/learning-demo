@@ -7,14 +7,17 @@
   <title>Document</title>
 </head>
 <body>
-  <button id="xhrbtn">获取百度首页代码</button>
+  <button id="xhrbtn">获取网络数据</button>
 
   <script>
     var btn = document.querySelector('#xhrbtn');
     btn.addEventListener('click', function() {
-      getWebsitePage('./index.js').then(function(res) {
+      console.log('-------请求开始');
+      getWebsitePage('https://www.apiopen.top/journalismApi').then(function(res) {
         console.log(res);
+        console.log('-------请求结束');
       })
+      console.log('-------点击事件结束，但是网络请求并没有结束');
     });
 
     function getWebsitePage(url) {
