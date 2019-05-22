@@ -34,6 +34,16 @@
       // 串行下载的方式
       var urls2 = ['', '', '', ''];
       serialGetWebsitePage(0, urls2);
+
+      // 串行下载的方式，且能捕获所有任务完成事件
+      serialGetWebsitePage2(0, urls2).then(function() {
+        // 所有任务结束后调用
+      });
+
+      // 串行下载的方式，且能捕获所有任务完成事件
+      serialGetWebsitePage3(0, urls2).then(function() {
+        // 所有任务结束后调用
+      });
     });
 
     // 串行下载函数
@@ -44,6 +54,31 @@
           // 此时上次的下载已经结束，开启下次的调用
           serialGetWebsitePage(index++, arr);
         })
+      }
+    }
+
+    function serialGetWebsitePage2(index, arr) {
+      return new Promise(function(resolve) {
+        if (index < arr.length) {
+          getWebsitePage1(arr[index]).then(function() {
+            serialGetWebsitePage2(index++, arr).then(function() {
+              resolve();
+            })
+          });
+        } else {
+          resolve()
+        }
+      });
+    }
+
+    // 这个和serialGetWebsitePage2函数效果一样，返回的promise是getWebsitePage1(arr[index]).then()的结果
+    function serialGetWebsitePage3(index, arr) {
+      if (index < arr.length) {
+        return getWebsitePage1(arr[index]).then(function() {
+          return serialGetWebsitePage3(index++, arr);
+        });
+      } else {
+        return Promise.resolve();
       }
     }
 
