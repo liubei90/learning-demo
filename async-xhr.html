@@ -31,7 +31,21 @@
         console.log(values);
       });
 
+      // 串行下载的方式
+      var urls2 = ['', '', '', ''];
+      serialGetWebsitePage(0, urls2);
     });
+
+    // 串行下载函数
+    function serialGetWebsitePage(index, arr) {
+      // 判断当前是否已经完成所有任务
+      if (index < arr.length) {
+        getWebsitePage1(arr[index]).then(function() {
+          // 此时上次的下载已经结束，开启下次的调用
+          serialGetWebsitePage(index++, arr);
+        })
+      }
+    }
 
     // function getWebsitePage(url) {
     //   return new Promise(function(resolve) {
