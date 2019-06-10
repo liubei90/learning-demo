@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="xhrbtn">获取网络数据</button>
+
+  <script>
+    var btn = document.querySelector('#xhrbtn');
+    btn.addEventListener('click', function() {
+      console.log('-------请求开始');
+      getWebsitePage1('https://www.apiopen.top/journalismApi').then(function(res) {
+        console.log(res);
+        console.log('-------请求结束');
+      })
+      console.log('-------点击事件结束，但是网络请求并没有结束');
+
+
+      // 多次下载的方式
+      var urls = ['https://www.apiopen.top/journalismApi', 'https://www.apiopen.top/journalismApi', 'https://www.apiopen.top/journalismApi', 'https://www.apiopen.top/journalismApi'];
+      var allPromise = [];
+      urls.forEach(function(u) {
+        allPromise.push(getWebsitePage1(u));
+      });
+
+      Promise.all(allPromise).then((values) => {
+        console.log(values);
+      });
+
+      // 串行下载的方式
+      var urls2 = ['', '', '', ''];
+      serialGetWebsitePage(0, urls2);
+
+      // 串行下载的方式，且能捕获所有任务完成事件
+      serialGetWebsitePage2(0, urls2).then(function() {
+        // 所有任务结束后调用
+      });
+
+      // 串行下载的方式，且能捕获所有任务完成事件
+      serialGetWebsitePage3(0, urls2).then(function() {
+        // 所有任务结束后调用
+      });
+    });
+
+    // 串行下载函数
+    function serialGetWebsitePage(index, arr) {
+      // 判断当前是否已经完成所有任务
+      if (index < arr.length) {
+        getWebsitePage1(arr[index]).then(function() {
+          // 此时上次的下载已经结束，开启下次的调用
+          serialGetWebsitePage(index++, arr);
+        })
+      }
+    }
+
+    function serialGetWebsitePage2(index, arr) {
+      return new Promise(function(resolve) {
+        if (index < arr.length) {
+          getWebsitePage1(arr[index]).then(function() {
+            serialGetWebsitePage2(index++, arr).then(function() {
+              resolve();
+            })
+          });
+        } else {
+          resolve()
+        }
+      });
+    }
+
+    // 这个和serialGetWebsitePage2函数效果一样，返回的promise是getWebsitePage1(arr[index]).then()的结果
+    function serialGetWebsitePage3(index, arr) {
+      if (index < arr.length) {
+        return getWebsitePage1(arr[index]).then(function() {
+          return serialGetWebsitePage3(index++, arr);
+        });
+      } else {
+        return Promise.resolve();
+      }
+    }
+
+    // function getWebsitePage(url) {
+    //   return new Promise(function(resolve) {
+    //     var xhr = new XMLHttpRequest();
+    //     // 第3个参数代表，这个请求会是异步请求。异步请求对前端很重要
+    //     xhr.open('GET', url, true);
+    //     xhr.onreadystatechange = function() {
+    //       // 当请求结束（xhr.readyState === 4），并且请求成功了（xhr.status === 200）
+    //       // 调用resolve返回异步请求结果xhr.responseText
+    //       // 这一步是在xhr.send()函数调用之后的某个时刻执行的。
+    //       if (xhr.readyState === 4 && xhr.status === 200) {
+    //         resolve(xhr.responseText);
+    //       }
+    //     }
+    //     xhr.send();
+    //   });
+    // }
+
+    function getWebsitePage1(url) {
+      return new Promise(function(resolve) {
+        request1(url, resolve);
+      });
+    }
+
+    function request1(url, resolve) {
+      var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            resolve(xhr.responseText);
+          }
+        }
+        xhr.send();
+    }
+
+    function getWebsitePage2(url) {
+      return new Promise(function(resolve) {
+        request2(url, function cb(res) {
+          resolve(res);
+        });
+      });
+    }
+
+    function request2(url, cb) {
+      var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            cb(xhr.responseText);
+          }
+        }
+        xhr.send();
+    }
+
+    function getWebsitePage3(url) {
+      return new Promise(function(resolve) {
+        request3(url).then(function(res) {
+          resolve(res);
+        });
+      });
+    }
+
+    function request3(url) {
+      return new Promise(function(resolve) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            resolve(xhr.responseText);
+          }
+        }
+        xhr.send();
+      });
+    }
+
+  </script>
+</body>
+</html>

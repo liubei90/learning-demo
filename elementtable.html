@@ -7,93 +7,125 @@
   <title>Document</title>
   <!-- 引入样式 -->
   <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <!-- 引入组件库 -->
-  <script src="https://unpkg.com/vue/dist/vue.js"></script>
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
   <style>
     html,
     body {
-      margin: 0;
       padding: 0;
+      margin: 0;
+    }
+    .oper-btn {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 99;
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <el-table 
-      :data="tableData"
-      :border="true"
-      :height="heigth">
-      <el-table-column label="name" prop="name" fixed></el-table-column>
-      <el-table-column label="tel" prop="tel" width="200"></el-table-column>
-      <el-table-column label="hobby" prop="hobby" width="200"></el-table-column>
-      <el-table-column label="address" prop="address" width="200"></el-table-column>
+    <el-table ref="table" :data="tableList" :height="height" border>
+      <el-table-column label="name" prop="name" fixed :width="width"></el-table-column>
+      <el-table-column label="age" prop="age" fixed :width="width"></el-table-column>
+      <el-table-column label="addr" prop="addr" :width="width"></el-table-column>
+      <el-table-column label="phone" prop="phone" :width="width"></el-table-column>
     </el-table>
+    <div class="oper-btn">
+      <el-button @click="handlePre">pre</el-button>
+      <el-button @click="handleNext">next</el-button>
+    </div>
   </div>
+  <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>  
+
   <script>
-    new Vue({
+  
+    var app = new Vue({
       el: '#app',
-      data: function() {
+      data() {
         return {
-          tableData: [
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌<br>asdsdsd","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌\r\nasdsdsd","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌\r\nasdsdsd","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-            {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-            {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-            {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-            {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-            {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"},
-          ],
-          heigth: 100,
+          tableList: [],
+          height: 110,
+          width: 100,
+          oldPointX: -1,
+          oldPointY: -1,
         };
       },
-      created() {
-        this.heigth = document.documentElement.clientHeight;
+      computed: {
+        wrapper() {
+          const table = this.$refs['table'];
+          if (table) {
+            return table.$refs['bodyWrapper'];
+          }
+        },
       },
-    })
+      created() {
+        for (let i = 0; i < 30; i++) {
+          this.tableList.push(Object.assign({}, {
+            name: '张三',
+            age: 18,
+            addr: '幸福大街36号',
+            phone: '13826010098',
+          }));
+        }
+
+        this.height = document.documentElement.clientHeight;
+        this.width = document.documentElement.clientWidth / 3;
+      },
+      mounted() {
+        const wrapper = this.wrapper;
+        // wrapper.removeEventListener('scroll', table.syncPostion, { passive: true });
+        wrapper.addEventListener('scroll', (event) => {
+          console.log(event);
+          // event.preventDefault();
+          // event.stopPropagation();
+          // event.stopImmediatePropagation();
+        });
+        wrapper.addEventListener('mousemove', (event) => {
+          console.log('mousemove');
+          event.preventDefault();
+        });
+        wrapper.addEventListener('touchmove', (event) => {
+          console.log('touchmove');
+          event.preventDefault();
+        });
+        wrapper.addEventListener('pointermove', (event) => {
+          console.log('pointermove');
+          event.preventDefault();
+        });
+        wrapper.addEventListener('mousewheel', (event) => {
+          console.log('mousewheel');
+          event.preventDefault();
+        });
+        
+
+        const table = this.$refs['table'].$el;
+        table.addEventListener('touchstart', (event) => {
+          this.oldPointX = event.touches[0].pageX;
+          this.oldPointY = event.touches[0].pageY;
+        });
+        table.addEventListener('touchmove', (event) => {
+          console.log('touchmove');
+          const panLength = event.touches[0].pageX - this.oldPointX
+          if (panLength > 50) {
+            this.handlePre();
+          } else if (panLength < -50) {
+            this.handleNext();
+          }
+        });
+      },
+      methods: {
+        handlePre() {
+          const wrapper = this.wrapper;
+          wrapper.scrollLeft -= this.width;
+        },
+        handleNext() {
+          const wrapper = this.wrapper;
+          wrapper.scrollLeft += this.width;
+        },
+      },
+    });
   </script>
 </body>
 </html>
