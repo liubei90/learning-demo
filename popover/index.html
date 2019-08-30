@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./popper.js"></script>
+  <link rel="stylesheet" href="./popper.css">
+</head>
+<body>
+  <div>
+    <ul>
+      <li class="popper-tip" data-popper="这是111提示">111</li>
+      <li class="popper-tip" data-popper="这是222提示">222</li>
+      <li class="popper-tip">333</li>
+      <li class="popper-tip">444</li>
+      <li class="popper-tip">555</li>
+    </ul>
+  </div>
+  <script>
+    window.addEventListener('load', function() {
+      var tipElms = document.getElementsByClassName('popper-tip');
+
+      for (var i = 0; i < tipElms.length; i++) {
+        (function(curNode) {
+          curNode.addEventListener('mouseenter', function() {
+            if (curNode.dataset.popper) {
+              Popper.showPop(curNode, { placement: 'top' });
+            } else {
+              Popper.showPop(curNode, { placement: 'top', content: '这是' + curNode.textContent + '<br>的提示' });
+            }
+          });
+          curNode.addEventListener('mouseleave', function() {
+            Popper.hidePop();
+          });
+        })(tipElms[i]);
+      }
+    });
+  </script>
+</body>
+</html>

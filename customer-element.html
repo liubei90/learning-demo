@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function createNode(nodeName) {
+      let node = document.createElement(nodeName);
+      node.normalizedNodeName = nodeName;
+      return node;
+    }
+
+    function createText(str) {
+      let text = document.createTextNode(str);
+      return text;
+    }
+  </script>
+  <script>
+    class WeElement extends HTMLElement {
+      static is = 'WeElement';
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        let shadowRoot;
+        if (!this.shadowRoot) {
+          shadowRoot = this.attachShadow({
+            mode: 'open',
+          });
+        } else {
+          shadowRoot = this.shadowRoot;
+          let fc;
+          while((fc = shadowRoot.firstChild)) {
+            shadowRoot.removeChild(fc);
+          }
+        }
+        // this.rootNode = this.render();
+        shadowRoot.appendChild(this.render());
+      }
+    }
+
+    function define(name, ctor) {
+      customElements.define(name, ctor);
+    }
+
+    function render(name, parent) {
+      let out = createNode(name);
+      parent.appendChild(out);
+    }
+  </script>
+  <script>
+    define('todo-list', class extends WeElement {
+      constructor() {
+        super();
+        this.todoList = [
+          { name: 'todoitem1' },
+          { name: 'todoitem2' },
+          { name: 'todoitem3' },
+          { name: 'todoitem4' },
+          { name: 'todoitem5' }
+        ];
+      }
+
+      render() {
+        let div = createNode('div');
+        for (let i = 0; i < this.todoList.length; i++) {
+          const item = createNode('todo-item');
+          item.todoItem = this.todoList[i];
+          div.appendChild(item);
+        }
+        return div;
+      }
+    });
+
+    define('todo-item', class extends WeElement {
+      constructor() {
+        super();
+        this.todoItem = null;
+      }
+
+      render() {
+        if (!this.todoItem) {
+          return createNode('div');
+        }
+        const div = createNode('div');
+        div.appendChild(createText(this.todoItem.name || ''));
+        return div;
+      }
+    });
+
+    render('todo-list', document.querySelector('body'));
+  </script>
+
+  <!-- demo2 -->
+  <div id="shadow-host">
+    <a href="">test</a>
+  </div>
+  <script>
+    var sh = document.querySelector('#shadow-host');
+    shadowRoot = sh.attachShadow({ mode: 'open' });
+    var aEle = document.createElement('a');
+    aEle.innerHTML = 'test2';
+    shadowRoot.appendChild(aEle);
+
+    var slot = document.createElement('slot');
+    shadowRoot.appendChild(slot);
+  </script>
+</body>
+</html>
