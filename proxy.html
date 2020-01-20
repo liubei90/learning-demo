@@ -86,7 +86,7 @@
     }
 
     function getArrayProxy() {
-      return new Proxy([1, 2, 3, allhandler]);
+      return new Proxy([1, 2, 3], allhandler);
     }
 
     function getFunctionProxy() {
@@ -212,20 +212,47 @@
         new fun();
       }
 
+      function iterator() {
+        // for of 
+        console.log('测试for of');
+        var arr = getArrayProxy();
+        for (let v of arr) {
+          console.log(v);
+        }
+
+        // for
+        console.log('测试for');
+        var arr2 = getArrayProxy();
+        for (let i = 0; i < arr2.length; i++) {
+          console.log(i);
+        }
+
+        // keys
+        console.log('测试keys');
+        var pro = getObjectProxy();
+        var keys = Object.keys(pro);
+        keys.forEach(function(key) {
+          console.log(key);
+        });
+
+      }
+
       [
-        getPrototypeOf,
-        setPrototypeOf,
-        isExtensible,
-        preventExtensions,
-        getOwnPropertyDescriptor,
-        defineProperty,
-        has,
-        get,
-        set,
-        deleteProperty,
-        ownKeys,
-        apply,
-        construct
+        // getPrototypeOf,
+        // setPrototypeOf,
+        // isExtensible,
+        // preventExtensions,
+        // getOwnPropertyDescriptor,
+        // defineProperty,
+        // has,
+        // get,
+        // set,
+        // deleteProperty,
+        // ownKeys,
+        // apply,
+        // construct,
+
+        iterator,
       ].forEach(function(func) {
         func();
       });

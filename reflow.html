@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    hello, world
+  </div>
+  <script>
+    var bstyle = document.body.style;
+    setTimeout(function changePadding() {
+      bstyle.paddingTop = '20px';
+      console.log(document.body.offsetTop);
+      console.log(document.body.scrollTop);
+      bstyle.border = "10px solid red";
+      // setTimeout(function() {
+      //   bstyle.border = "10px solid red";
+      // });
+      // console.log(document.body.offsetTop);
+      // new Promise(function(resolve) {
+      //   resolve();
+      // }).then(function() {
+      //   console.log(1);
+      //   bstyle.paddingTop = '20px';
+      // });
+      // new Promise(function(resolve) {
+      //   resolve();
+      // }).then(function() {
+      //   console.log(2);
+      //   console.log(document.body.offsetTop);
+      //   bstyle.border = "10px solid red";
+      // });
+      // new Promise(function(resolve) {
+      //   resolve();
+      // }).then(function() {
+      //   console.log(3);
+      //   bstyle.color = "blue";
+      // });
+      // bstyle.color = "blue";
+      // bstyle.fontSize = "2em";
+    }, 3000);
+    setTimeout(function changeBkC() {
+      // bstyle.backgroundColor = 'blue';
+    }, 6000);
+  </script>
+</body>
+</html>
