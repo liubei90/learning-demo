@@ -24,7 +24,7 @@
     "babel-plugin-transform-regenerator": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "express": "^4.16.4",
-    "marked": "^0.6.0",
+    "marked": "^0.7.0",
     "multiparty": "^4.2.1"
   },
   "devDependencies": {
