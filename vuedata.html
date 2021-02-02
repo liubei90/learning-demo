@@ -8,15 +8,22 @@
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
+  <div id="app">
+    <span>{{ name[1] }}</span>
+  </div>
   <script>
     app = new Vue({
+      el: '#app',
       data: function() {
         return {
-          name: ['hello']
+          name: ['hello', 'world']
         }
       },
       created: function() {
-        this.bar = ['bar'];
+        setInterval(() => {
+          this.name[1] = '111' + this.name[1];
+          console.log(this.name[1]);
+        }, 1000)
       }
     });
     console.log(app);

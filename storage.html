@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 验证cookie、localStorage、sessionStorage的有效期和作用范围
+    // 有效期： 设置一个值，关闭所有浏览器窗口，再次打开后验证是否还存在
+    // 作用范围： 设置一个值，新打开一个标签，一个窗口，是否可以查看到
+    // 只在chrome浏览器下做测试
+    // 结果： 
+    // 有效期上，cookie遵循设置，如果没设置，关闭浏览器后自动过期，sessionStorage是标签关闭后过期，localStorage没有过期时间
+    // 作用范围，cookie和localStorage是跨标签和窗口共享，sessionStorage是只在当前标签有效
+
+    function setStorage() {
+      document.cookie = 'username=测试用户; path=/; Max-Age=60';
+      sessionStorage.setItem('username', '测试用户');
+      localStorage.setItem('username', '测试用户');
+    }
+
+    function getStorage() {
+      console.log('cookie', document.cookie);
+      console.log('sessionStorage', sessionStorage.getItem('username'));
+      console.log('localStorage', localStorage.getItem('username'));
+    }
+
+    getStorage();
+    // setStorage();
+
+  </script>
+</body>
+</html>

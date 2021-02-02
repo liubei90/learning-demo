@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>dom-demo</title>
+</head>
+<body>
+  <div id="index-panel"></div>
+  <div id="demo-panel"></div>
+  <script>
+    var scriptList = [];
+    var indexElm = document.getElementById('index-panel');
+    var demoPanel = document.getElementById('demo-panel');
+    
+
+    function createElm(sc) {
+      var el = document.createElement('span');
+      el.textContent = sc.name;
+      el.addEventListener('click', function() {
+        if (typeof sc.cb === 'function') {
+          sc.cb.call(null);
+        }
+      });
+      return el;
+    }
+
+    function clearElmChildren(dom) {
+      for (var i = 0; i < dom.children.length; i++) {
+        dom.removeChild(dom.children[i]);
+      }
+    }
+
+    function render() {
+      clearElmChildren(indexElm);
+
+      for (var i = 0; i < scriptList.length; i++) {
+        var el = createElm(scriptList[i]);
+        if (el) {
+          indexElm.appendChild(el);
+        }
+      }
+    }
+
+    function registScript(name, cb) {
+      scriptList.push({
+        name: name,
+        cb: cb
+      });
+    }
+
+    window.addEventListener('load', function() {
+      render();
+    });
+  </script>
+  <!-- 创建自定义事件 -->
+  <script>
+    registScript('customer-event', function() {
+      clearElmChildren(demoPanel);
+      var btn = document.createElement('button');
+      btn.textContent = '自定义事件';
+      btn.addEventListener('cat', function(event) {
+        console.log(event);
+      });
+      demoPanel.appendChild(btn);
+
+      var eve = new CustomEvent('cat', {detail: {payload: '这是一段负载'}});
+      btn.dispatchEvent(eve);
+    });
+  </script>
+  <!-- dom-tree -->
+  <div>
+    <p>所有dom类都是继承自Node, Node的子类有 'Document', 'DocumentType', 'DocumentFragment', 'Element', 'Text',
+        'ProcessingInstruction', 'Comment'。这些子类的实例共同构成node tree。</p>
+    <p>domcument中的documentElement的定义是，parent是document的那个element。documentElement可能存在也可能不存在</p>
+    <p></p>
+  </div>
+  <script>
+    registScript('dom-tree', function() {
+      clearElmChildren(demoPanel);
+      var txt1 = document.createTextNode('1234565789');
+      demoPanel.appendChild(txt1);
+      console.dir('text length', txt1.length);
+      var ulEle = document.createElement('ul');
+      for (var i = 0; i < 5; i++) {
+        var liEle = document.createElement('li');
+        liEle.textContent = i;
+        ulEle.appendChild(liEle);
+      }
+      demoPanel.appendChild(ulEle);
+      console.log('node length', ulEle.length)
+      console.dir(document);
+    });
+  </script>
+  <!-- Mutation observers -->
+  <script></script>
+</body>
+</html>
