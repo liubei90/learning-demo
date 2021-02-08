@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // with用来修改语句块中的作用域链，将with中的对象加入到语句块作用链的顶部
+    with({ a: 'abc' }) {
+      console.log(this);
+      console.log(a);
+    }
+  </script>
+</body>
+</html>

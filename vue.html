@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app01">{{ foo }}</div>
+  <script>
+    // 1. 声明Vue
+    const Vue01 = (function() {
+      // 4. createAppAPI
+      const createAppAPI = render => {
+        return function createApp(rootComponent) {
+          // 创建app并返回
+          const app = {
+            mount(container) {
+              // 1. 获取vnode 来源是根组件的渲染函数
+              const vnode = {
+                tag: 'h2',
+                props: null,
+                children: rootComponent.data().foo
+              }
+
+              // 2. 执行渲染
+              render(vnode, container);
+            }
+          }
+
+          return app;
+        };
+      }
+
+      // 3. 
+      const createRenderer = ({ querySelector, createElement, insert }) => {
+        // 定义render
+        const render = function(vnode, container) {
+          // 1. 获取宿主元素
+          const parent = querySelector(container);
+
+          // 2. 创建当前节点
+          const child = createElement(vnode.tag);
+
+          // 3. 处理属性和children
+          const children = vnode.children;
+          if (typeof children === 'string') {
+            child.innerText = children;
+          } else {
+            // todo...
+          }
+
+          // 4. 插入
+          insert(child, parent)
+        }
+
+        return {
+          render,
+          createApp: createAppAPI(render),
+        }
+      }
+      // 2. renderer
+      const renderer = createRenderer({
+        querySelector(sel) {
+          return document.querySelector(sel);
+        },
+        createElement(tag) {
+          return document.createElement(tag);
+        },
+        insert(child, parent) {
+          parent.appendChild(child);
+        },
+      });
+
+      return {
+        createApp(options) {
+          return renderer.createApp(options);
+        }
+      }
+    })();
+
+    Vue01.createApp({
+      data() {
+        return {
+          foo: 'fooo'
+        }
+      }
+    }).mount('#app01');
+  </script>
+
+
+  <div id="app02"></div>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.0.2/vue.global.js"></script>
+  <script>
+    const { createRenderer } = Vue;
+
+    const renderer = createRenderer({
+      createComment() {
+        return null;
+      },
+      createElement(tag) {
+        return { tag }
+      },
+      patchProp(el, key, prev, next) {
+        el[key] = next;
+      },
+      insert(child, parent) {
+        if (parent.nodeType === 1) {
+          ;
+        }
+      },
+    });
+
+    function createCanvasApp(App) {
+      const app = renderer.createApp(App);
+
+      const mount = app.mount;
+      app.mount = function(selector) {
+        const canvas = document.createElement('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        document.querySelector(selector).appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+
+        mount(canvas);
+      }
+
+      return app
+    }
+
+    createCanvasApp({}).mount('#app02');
+  </script>
+</body>
+</html>

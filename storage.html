@@ -27,8 +27,27 @@
       console.log('localStorage', localStorage.getItem('username'));
     }
 
-    getStorage();
+    // getStorage();
     // setStorage();
+
+    // 每个domain只能有20条cookie, 每条长度不能超过4k
+    // 使用document.cookie赋值的方法验证
+    // 结果单条cookie只能存 4 * 1000 + 63 + 1 个字符， 超出长度会设置不成功
+    // chrome最多可以设置154条cookie, 保留最新设置的， 删除旧设置的
+    function setCookie() {
+      let longText = '';
+      for (let i = 0; i < 4 * 1000 + 63; i++) {
+        longText += '1';
+      }
+      longText += '2';
+      document.cookie = `longcookie=${longText}; path=/; Max-Age=600`;
+
+      for (let i = 0; i < 400; i++) {
+        document.cookie = `count${i}=${i}; path=/; Max-Age=600`;
+      }
+    }
+
+    setCookie();
 
   </script>
 </body>

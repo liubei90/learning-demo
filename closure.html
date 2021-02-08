@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 使用let声明在for循环定义中会生成闭包的特性，优化for循环作用域导致i共享的问题
+    for (let i = 0; i < 10; i++) {
+      setTimeout(function() {
+        console.log(i);
+      }, 1);
+    }
+  </script>
+</body>
+</html>
